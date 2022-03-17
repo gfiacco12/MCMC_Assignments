@@ -20,8 +20,8 @@ def loglike(x):
     a = (gamma((nu+1)/2) / (gamma(nu/2) * np.sqrt(2*np.pi)*sig))
     b = (1 + (1/nu)*((x - mu)/sig)**2)**(-0.5*(nu+1))
     pi = a * b
-    #now impliment flat priors for our parameters - mu, nu, and sig cannot go below 0
-    if mu < 0 or sig < 0.1 or nu < 0:
+    #now impliment flat priors for our parameter
+    if x > sig+4 or x < sig-4:
        return (-1e6)
     return(np.sum(np.log(pi))) #returns sum of the logs
 
@@ -32,7 +32,6 @@ def mcmc(alp, conv):
     naccept = 0 #counter for acceptance
     accepted_values = [] #array for all accepted values
     step_iter = [] #array that matches all accepted values
-    dist_data = []
 
     #create the jump
     for i in range(0, conv):
@@ -61,9 +60,6 @@ def mcmc(alp, conv):
         #print("the new alpha will be", x_0)
         #print(' -----------')
         #print(' -----------')
-    #if we want to model a student t distribution, and the parameter we are estimating is the "data"
-    #that you put into a student-t dist, then to get out a distribution we need to feed each accepted jump 
-    #through the student-t distribution (our likelihood)
     '''''
         for j in accepted_values:
             mu = 1
@@ -75,11 +71,24 @@ def mcmc(alp, conv):
             pi = a * b
             dist_data.append(pi)
     '''
-    print(len(accepted_values))
-    plt.hist(accepted_values, bins=50, density=True)
+    print(naccept/conv)
+
+    ### Graphing ###
+    mu = 1
+    sig = 1
+    nu = 3
+    x = np.linspace(sig-4, sig+4, len(accepted_values) )
+    a = (gamma((nu+1)/2) / (gamma(nu/2) * np.sqrt(2*np.pi)*sig))
+    b = (1 + (1/nu)*((x - mu)/sig)**2)**(-0.5*(nu+1))
+    pi = a * b
+    
+    plt.hist(accepted_values, bins=50, density=True, label="MCMC data")
+    plt.plot(x, pi, label="Student-t Dist")
+    plt.legend()
+    plt.title("Posterior Distribution")
     plt.show()
 
     return(accepted_values, naccept, step_iter)
 
-mcmc(0.1, 10000)
+mcmc(0.1, 50000)
 
