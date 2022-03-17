@@ -28,7 +28,7 @@ def loglike(x):
 #create the MCMC
 #inputs are starting point, jump size, number of points until convergence 
 def mcmc(alp, conv):
-    x_0 = -2 #starting point
+    x_0 = alp #starting point
     naccept = 0 #counter for acceptance
     accepted_values = [] #array for all accepted values
     step_iter = [] #array that matches all accepted values
@@ -38,17 +38,17 @@ def mcmc(alp, conv):
     for i in range(0, conv):
 
         #proposal distribution is a gaussian, with jump size alpha, mean (???)
-        new_step = x_0 + stats.norm(1, alp).rvs()
-        print('current new step', new_step)
+        new_step = x_0 + stats.norm(0, alp).rvs()
+       # print('current new step', new_step)
         #calculate Hastings ratio - difference of the logs
         y = loglike(new_step) - loglike(x_0)
         #now we want the negative number to be chosen, so compare to 0
         ratio =min(0, y)
-        print("the ratio is" , np.exp(ratio))
+        #print("the ratio is" , np.exp(ratio))
         #generate a random number between 0 and 1
         u = np.random.uniform(0,1)
-        print("the random number is", u)
-        print("the current jump is", x_0)
+        #print("the random number is", u)
+        #print("the current jump is", x_0)
         #we need to re-exponentiate the log ratio to compare it to the random number
         if u < np.exp(ratio):
             #accept the point
@@ -58,18 +58,28 @@ def mcmc(alp, conv):
             step_iter.append(i)
         else:
             accepted_values.append(x_0)
-        print("the new alpha will be", x_0)
-        print(' -----------')
-        print(' -----------')
+        #print("the new alpha will be", x_0)
+        #print(' -----------')
+        #print(' -----------')
     #if we want to model a student t distribution, and the parameter we are estimating is the "data"
     #that you put into a student-t dist, then to get out a distribution we need to feed each accepted jump 
     #through the student-t distribution (our likelihood)
+    '''''
+        for j in accepted_values:
+            mu = 1
+            sig = 1
+            nu = 3
 
+            a = (gamma((nu+1)/2) / (gamma(nu/2) * np.sqrt(2*np.pi)*sig))
+            b = (1 + (1/nu)*((j - mu)/sig)**2)**(-0.5*(nu+1))
+            pi = a * b
+            dist_data.append(pi)
+    '''
     print(len(accepted_values))
-    plt.hist(accepted_values, bins=20, density=True)
+    plt.hist(accepted_values, bins=50, density=True)
     plt.show()
 
     return(accepted_values, naccept, step_iter)
 
-mcmc(0.1, 50)
+mcmc(0.1, 10000)
 
