@@ -58,19 +58,7 @@ def mcmc(alp, conv):
         else:
             accepted_values.append(x_0)
         #print("the new alpha will be", x_0)
-        #print(' -----------')
-        #print(' -----------')
-    '''''
-        for j in accepted_values:
-            mu = 1
-            sig = 1
-            nu = 3
 
-            a = (gamma((nu+1)/2) / (gamma(nu/2) * np.sqrt(2*np.pi)*sig))
-            b = (1 + (1/nu)*((j - mu)/sig)**2)**(-0.5*(nu+1))
-            pi = a * b
-            dist_data.append(pi)
-    '''
     print(naccept/conv)
 
     ### Graphing ###
