@@ -4,6 +4,7 @@ from numpy.random import uniform
 import scipy.stats as stats
 from scipy.special import gamma, factorial
 
+
 ### MCMC ASSIGNMENT 1 ###
 #Create an MCMC that draws from Student-t distribution
 
@@ -75,9 +76,11 @@ def mcmc(alp, conv):
     plt.hist(accepted_values, bins=50, density=True, label="MCMC data")
     plt.plot(x, pi, label="Student-t Dist")
     plt.legend()
-    plt.title("Posterior Distribution")
+    plt.xlabel("x")
+    plt.ylabel("Probability")
+    plt.title("Posterior Distribution for $\\alpha$=0.1")
     plt.show()
-    '''
+   '''
     return(accepted_values, naccept, step_iter)
 
 ### Part a - Plotting chains for different jump values 
@@ -85,27 +88,44 @@ def mcmc(alp, conv):
 def chain_plotting():
 
     #val = accepted value array, n = counter, iter = array of iterations
-    val1, n1, iter1 = mcmc(0.1, 10000)
-    val2, n2, iter2 = mcmc(0.01, 10000)
-    val3, n3, iter3 = mcmc(1, 10000)
-    val4, n4, iter4 = mcmc(10, 10000)
+    val1, n1, iter1 = mcmc(0.1, 100)
+    val2, n2, iter2 = mcmc(0.01, 1000)
+    val3, n3, iter3 = mcmc(1, 1000)
+    val4, n4, iter4 = mcmc(10, 1000)
  
     #Trace plot
+    
+    ''''
     fig, axs = plt.subplots(2, 2)
+    fig.add_subplot(111, frame_on=False)
+    plt.tick_params(labelcolor="none", bottom=False, left=False)
+
     plt.suptitle("Trace plot for N = 10,000")
 
     axs[0, 1].plot(iter1, val1)
-    axs[0, 1].set_title("alpha=0.1")
+    axs[0, 1].set_title("$\\alpha$=0.1")
     axs[0,0].plot(iter2, val2)
-    axs[0, 0].set_title("alpha=0.01")
+    axs[0, 0].set_title("$\\alpha$=0.01")
     axs[1,0].plot(iter3, val3)
-    axs[1,0].set_title("alpha=1.0")
+    axs[1,0].set_title("$\\alpha$=1.0")
     axs[1,1].plot(iter4, val4)
-    axs[1, 1].set_title("alpha=10.0")
+    axs[1, 1].set_title("$\\alpha$=10.0")
+
+    plt.xlabel("Iterations")
+    plt.ylabel("Jumps")
     
     plt.tight_layout()
     plt.show()
+    '''
+    run_avg1 = []
+    print(val1[0:3])
+    #Running mean plot
+    for i in val1:
+        ravg = np.cumsum(val1[0:i])/i
+        run_avg1.append(ravg)
 
+    print(run_avg1)
     return()
 
 chain_plotting()
+#mcmc(0.1, 1000000)

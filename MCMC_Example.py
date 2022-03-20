@@ -46,22 +46,22 @@ def MCMC(dat, alp, conv):
 
         new_step = a_0 + stats.norm(0, alp).rvs()
         new_steps.append(new_step)
-        print('current new step', new_step)
+        #print('current new step', new_step)
         #print('likelihood proposed', Likelihood(new_step, dat))
         #print('likelihood old', Likelihood(a_0, dat))
 
         #calculate Hastings Ratio - sigma in our likelihood is alpha here
         #ratio of likelihoods = difference of log likelihood
         y = Likelihood(new_step, dat) - Likelihood(a_0, dat)
-        print(y)
-        #now we want the negative number to be chosen, so compare to 0
+        #print(y)
+       # #now we want the negative number to be chosen, so compare to 0
         ratio =min(0, y)
-        print("the ratio is" , np.exp(ratio))
+        #print("the ratio is" , np.exp(ratio))
        
         #generate a random number between 0 and 1
         u = np.random.uniform(0,1)
-        print("the random number is", u)
-        print("the current alpha is", a_0)
+        #print("the random number is", u)
+        #print("the current alpha is", a_0)
         #we need to re-exponentiate the log ratio to compare it to the random number
         if u < np.exp(ratio):
             #accept the point
@@ -70,14 +70,29 @@ def MCMC(dat, alp, conv):
             accepted_values.append(new_step)
             step_iter.append(j)
         else:
+            step_iter.append(j)
             accepted_values.append(a_0)
-        print("the new alpha will be", a_0)
-        print(' -----------')
-        print(' -----------')
+        #print("the new alpha will be", a_0)
+        #print(' -----------')
+        #print(' -----------')
     print(len(accepted_values))
     #print(naccept/niter)
     plt.hist(accepted_values, bins=25, density=True)
     plt.show()
+
+    #Running mean plot
+    run_avg1 = np.cumsum(accepted_values)
+    final = []
+    
+    for i in range(0,len(run_avg1)): 
+        final.append(run_avg1[i]/(1+i))
+   
+    print(len(step_iter))
+    print(len(final))
+
+    plt.plot(step_iter, final)
+    plt.show()
+    
     return(a_0, accepted_values)
 
 MCMC(data, 1, 10000)
