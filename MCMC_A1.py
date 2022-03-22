@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from numpy.random import uniform 
 import scipy.stats as stats
 from scipy.special import gamma, factorial
+import statsmodels.api as sm
+
 
 
 ### MCMC ASSIGNMENT 1 ###
@@ -72,15 +74,15 @@ def mcmc(alp, conv):
     nu = 3
     x = np.linspace(sig-5, sig+5, len(accepted_values) )
     pi = stats.t.pdf(x, nu, mu, sig)
-    '''
+    
     plt.hist(accepted_values, bins=50, density=True, label="MCMC data")
     plt.plot(x, pi, label="Student-t Dist")
     plt.legend()
     plt.xlabel("x")
     plt.ylabel("Probability")
-    plt.title("Posterior Distribution for $\\alpha$=0.1")
+    plt.title("Posterior Distribution for $\\alpha$=10.0")
     plt.show()
-   '''
+    
     return(accepted_values, naccept, step_iter)
 
 ### Part a - Plotting chains for different jump values 
@@ -95,7 +97,6 @@ def chain_plotting():
  
     #Trace plot
     
-    ''''
     fig, axs = plt.subplots(2, 2)
     fig.add_subplot(111, frame_on=False)
     plt.tick_params(labelcolor="none", bottom=False, left=False)
@@ -116,16 +117,37 @@ def chain_plotting():
     
     plt.tight_layout()
     plt.show()
-    '''
-    run_avg1 = []
-    print(val1[0:3])
-    #Running mean plot
-    for i in val1:
-        ravg = np.cumsum(val1[0:i])/i
-        run_avg1.append(ravg)
-
-    print(run_avg1)
+  
     return()
 
-chain_plotting()
-#mcmc(0.1, 1000000)
+#chain_plotting()
+#mcmc(10.0, 10000)
+from statsmodels.graphics import tsaplots
+def stat_calc():
+    data, n1, iter1 = mcmc(10, 100000)
+    #val2, n2, iter2 = mcmc(0.01, 1000000)
+    #val3, n3, iter3 = mcmc(1, 1000000)
+    #val4, n4, iter4 = mcmc(10, 1000000)
+    fig1 = tsaplots.plot_acf(data, lags=1000)
+    plt.title("Autocorrelation for $\\alpha=10$")
+    plt.xlabel("h")
+    plt.ylabel("Correlation Coefficient")
+    '''
+    fig2 = tsaplots.plot_acf(val2, lags=60)
+    plt.title("Autocorrelation for $\\alpha=0.01$")
+    plt.xlabel("Lag at k")
+    plt.ylabel("Correlation Coefficient")
+    fig3 = tsaplots.plot_acf(val3, lags=60)
+    plt.title("Autocorrelation for $\\alpha=1$")
+    plt.xlabel("Lag at k")
+    plt.ylabel("Correlation Coefficient")
+    fig4 = tsaplots.plot_acf(val4, lags=60)
+    plt.title("Autocorrelation for $\\alpha=10$")
+    plt.xlabel("Lag at k")
+    plt.ylabel("Correlation Coefficient")
+    '''
+    plt.show()
+
+    
+    return()
+stat_calc()
