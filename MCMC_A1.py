@@ -26,7 +26,7 @@ def loglike(x):
     #now impliment flat priors for our parameter
     if x > sig+4 or x < sig-4:
        return (-1e6)
-    return(np.sum(np.log(pi))) #returns sum of the logs
+    return(np.sum(np.log(pi)), np.log(pi)) #returns sum of the logs
 
 #create the MCMC
 #inputs are jump size, number of points until convergence 
@@ -124,11 +124,11 @@ def chain_plotting():
 #mcmc(10.0, 10000)
 from statsmodels.graphics import tsaplots
 def stat_calc():
-    data, n1, iter1 = mcmc(10, 100000)
+    data, n1, iter1 = mcmc(0.01, 1000000)
     #val2, n2, iter2 = mcmc(0.01, 1000000)
     #val3, n3, iter3 = mcmc(1, 1000000)
     #val4, n4, iter4 = mcmc(10, 1000000)
-    fig1 = tsaplots.plot_acf(data, lags=1000)
+    fig1 = tsaplots.plot_acf(data, lags=10000)
     plt.title("Autocorrelation for $\\alpha=10$")
     plt.xlabel("h")
     plt.ylabel("Correlation Coefficient")
@@ -147,7 +147,36 @@ def stat_calc():
     plt.ylabel("Correlation Coefficient")
     '''
     plt.show()
-
-    
     return()
-stat_calc()
+    
+#Fisher Information matrix
+#compute partial derivatives with respect to x - our data
+import sympy as sp
+from sympy import symbols, diff, solve
+def fisher():
+    x = symbols('x', real=True)
+    mu = 1
+    sig = 1
+    nu = 3
+    a = (gamma((nu+1)/2) / (gamma(nu/2) * np.sqrt(2*np.pi)*sig))
+    b = (1 + (1/nu)*((x - mu)/sig)**2)**(-0.5*(nu+1))
+    pi = a * b
+
+    #find maxima for pi
+    fprime = sp.diff(pi,x)
+    max_val = sp.solve(fprime, x)
+    print(max_val)
+    #want ln(pi)
+    f = sp.log(pi)
+    #take two partial derivatives wrt x
+    diff1 = sp.diff(f,x)
+    diff2 = compile(str(sp.diff(diff1,x)), 'test', 'eval')
+
+    print(diff2)
+    #now evaluate at maxima
+    x = max_val
+
+    fisher = -eval(diff2,{"x": 1})
+    print(fisher)
+    return()
+fisher()
