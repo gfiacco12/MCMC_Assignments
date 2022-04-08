@@ -10,9 +10,9 @@ N = 1000
 data = np.random.normal(0, 6, N)
 x = np.linspace(-5, 5, N)
 curve = stats.norm(0, 1)
-plt.hist(data, bins=20, density=True)
-plt.plot(x, curve.pdf(x))
-plt.show()
+#plt.hist(data, bins=20, density=True)
+#plt.plot(x, curve.pdf(x))
+#plt.show()
 
 
 #start by defining all of the functions we will need 

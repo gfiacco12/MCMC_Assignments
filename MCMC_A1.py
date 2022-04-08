@@ -35,7 +35,6 @@ def mcmc(alp, conv):
     naccept = 0 #counter for acceptance
     accepted_values = [] #array for all accepted values
     step_iter = [] #array that matches all accepted values
-    mean_values = []
 
     #create the jump    
     for i in range(0, conv):
@@ -85,7 +84,7 @@ def mcmc(alp, conv):
     plt.show()
     
     return(accepted_values, naccept, step_iter)
-mcmc(0.0212, 50000)
+mcmc(0.0212, 1000)
 
 
 ### Part a - Plotting chains for different jump values 
